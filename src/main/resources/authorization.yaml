@@ -1,0 +1,245 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+openapi: 3.0.1
+info:
+  title: Authorization Service
+  description: Authorize Users
+  contact:
+    email: Tyler@service84.io
+  license:
+    name: The Apache License, Version 2.0
+  version: 1.0.0
+servers:
+- url: http://authorization/
+- url: http://authorization.service84/
+- url: https://authorization.api.service84.io/
+- url: https://authorization.api.dev.service84.io/
+- url: http://localhost:31202/
+paths:
+  /request_token:
+    post:
+      summary: Request an Authorization Token using an API Key
+      tags:
+        - token
+      security:
+        - BasicAuth: []
+      operationId: request_token
+      requestBody:
+        $ref: '#/components/requestBodies/TokenRequest'
+      parameters:
+      - $ref: '#/components/parameters/Authentication'
+      responses:
+        200:
+          $ref: '#/components/responses/Token'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/InsufficientPermission'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /exchange_token:
+    post:
+      summary: Exchange an Authentication Token for an Authorization Token
+      tags:
+        - token
+      security:
+        - BearerAuth: []
+      operationId: exchange_token
+      requestBody:
+        $ref: '#/components/requestBodies/TokenRequest'
+      parameters:
+      - $ref: '#/components/parameters/Authentication'
+      responses:
+        200:
+          $ref: '#/components/responses/Token'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/InsufficientPermission'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /impersonate_identity:
+    post:
+      summary: Request an Impersonated Authorization Token
+      tags:
+        - token
+      security:
+        - BearerAuth: []
+      operationId: impersonate_identity
+      requestBody:
+        $ref: '#/components/requestBodies/ImpersonatedTokenRequest'
+      parameters:
+      - $ref: '#/components/parameters/Authentication'
+      responses:
+        200:
+          $ref: '#/components/responses/Token'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/InsufficientPermission'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /jwks:
+    get:
+      summary: The the Public keys used to sign current JWTs
+      tags:
+        - token
+      operationId: get_jwks
+      responses:
+        200:
+          $ref: '#/components/responses/PublicKeyList'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/InsufficientPermission'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+    PublicKey:
+      type: object
+      properties:
+        alg:
+          description: Use Algorithm
+          example: RS512
+          type: string
+        e:
+          description: Base64 URL Encoding of the Public Exponent Bytes
+          example: AQAB
+          type: string
+        kid:
+          description: The Key Id
+          example: a1f2679e-b0be-49e0-9f98-7c561502688a
+          type: string
+        kty:
+          description: The Key Type
+          example: RSA
+          type: string
+        n:
+          description: Base64 URL Encoding of the Modulus Bytes
+          example: ANCh2owPMRtenFoELtPGNqynYTE4rRYLZYmx6aQHdV2iA4xNOfb268FZiGjfV7SV80cW6riIoaHMBgyh_3ujyFE=
+          type: string
+        use:
+          description: Intended Use of the Key
+          example: sig
+          type: string
+    PublicKeyList:
+      type: object
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicKey'
+    TokenRequest:
+      type: object
+      properties:
+        duration:
+          description: Duration in seconds that the Token should last
+          type: integer
+        scopes:
+          type: array
+          items:
+            type: string
+    ImpersonatedTokenRequest:
+      type: object
+      properties:
+        identity:
+          type: string
+          format: uuid
+        duration:
+          description: Duration in seconds that the Token should last
+          type: integer
+        scopes:
+          type: array
+          items:
+            type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+  requestBodies:
+    TokenRequest:
+      description: Token Request
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenRequest'
+    ImpersonatedTokenRequest:
+      description: Impersonated Token Request
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ImpersonatedTokenRequest'
+  responses:
+    PublicKeyList:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PublicKeyList'
+    Token:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Token'
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InsufficientPermission:
+      description: Insufficient Permission
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    Authentication:
+      in: header
+      name: Authentication
+      description: The Authentication Header
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    BasicAuth:
+      type: http
+      scheme: basic
+tags:
+  - name: token
+    description: Acts on or returns a Token
