@@ -15,6 +15,6 @@ ext {
   s84JarName = 'authorization-service'
   s84Description = 'A service for authorization'
   s84GithubBase = 'https://github.com/service84-io/authorization-service'
-  s84Version = '0.5.0-SNAPSHOT'
+  s84Version = '0.5.0'
 }
 
