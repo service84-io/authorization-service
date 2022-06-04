@@ -20,15 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import io.service84.clients.impersonation.ApiClient;
+
 @Configuration("46DBA317-F86D-4793-8122-43126F50B3CE")
 public class ImpersonationConfiguration {
   private static final Logger logger = LoggerFactory.getLogger(ImpersonationConfiguration.class);
 
   @Autowired
   public ImpersonationConfiguration(
-      /*ApiClient apiClient,*/
+      ApiClient apiClient,
       @Value("${io.service84.clients.impersonation.url}") String impersonationURL) {
     logger.debug("ImpersonationConfiguration");
-    // apiClient.setBasePath(impersonationURL);
+    apiClient.setBasePath(impersonationURL);
   }
 }

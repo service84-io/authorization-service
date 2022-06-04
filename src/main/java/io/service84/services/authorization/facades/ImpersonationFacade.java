@@ -18,19 +18,25 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 
+import io.service84.clients.impersonation.api.ImpersonationApi;
+import io.service84.clients.impersonation.dto.AssumableIdentityDTO;
+import io.service84.clients.impersonation.dto.IdentityRequestDTO;
 import io.service84.services.authorization.errors.ServerError;
 
 @Service("ECF625D9-420F-42F5-A7CA-F5A79FBDB2BD")
 public class ImpersonationFacade {
   private static final Logger logger = LoggerFactory.getLogger(ImpersonationFacade.class);
 
-  // @Autowired private ImpersonationApi impersonationApi;
+  @Autowired private ImpersonationApi impersonationApi;
 
-  public /*AssumableIdentityDTO*/ Object assumeIdentity(String authentication, UUID identity) {
+  public AssumableIdentityDTO assumeIdentity(String authentication, UUID identity) {
     logger.debug("assumeIdentity");
-    /*
+
     try {
       IdentityRequestDTO assumeIdentityRequest = new IdentityRequestDTO();
       assumeIdentityRequest.setIdentity(identity);
@@ -46,9 +52,9 @@ public class ImpersonationFacade {
 
       if (e.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
         throw new ServerError(e);
-      }*/
+      }
 
-    throw new ServerError(/*e*/ );
-    // }
+      throw new ServerError(e);
+    }
   }
 }

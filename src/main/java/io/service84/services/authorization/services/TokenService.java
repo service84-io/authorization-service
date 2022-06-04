@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.service84.clients.apikey.dto.APIKeyDTO;
+import io.service84.clients.impersonation.dto.AssumableIdentityDTO;
 import io.service84.clients.permission.dto.SubjectScopePageDTO;
 import io.service84.library.authutils.services.AuthenticationService;
 import io.service84.services.authorization.configurations.ServiceBootstrapAuthentication;
@@ -77,10 +78,10 @@ public class TokenService {
     logger.debug("impersonateIdentity");
     String authentication = authenticationService.getAuthenticationToken();
 
-    /*AssumableIdentityDTO*/ Object assumedIdentity =
+    AssumableIdentityDTO assumedIdentity =
         impersonationFacade.assumeIdentity(authentication, identity);
     String bootstrapToken = serviceAuthentication.getBootstrapToken();
-    /*SubjectScopePageDTO subjectScopePage =
+    SubjectScopePageDTO subjectScopePage =
         subjectScopeFacade.getSubjectScopes(
             bootstrapToken,
             Collections.singletonList(assumedIdentity.getIdentity()),
@@ -90,7 +91,7 @@ public class TokenService {
 
     if (subjectScopePage.getMetadata().getTotal() == scopes.size()) {
       return jwtService.createToken(assumedIdentity.getIdentity(), duration, scopes);
-    }*/
+    }
 
     throw new UngrantedScopeException();
   }
