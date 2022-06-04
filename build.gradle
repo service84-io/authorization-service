@@ -174,7 +174,7 @@ repositories {
 }
 
 configurations {
-  service
+  javaClient
 }
 
 configurations.all {
@@ -205,8 +205,9 @@ dependencies {
 
   implementation 'net.logstash.logback:logstash-logback-encoder:4.11'
 
-  service 'io.service84.services:apikey-service:0.5.0-SNAPSHOT@jar'
-  service 'io.service84.services:permission-service:0.5.0-SNAPSHOT@jar'
+  javaClient 'io.service84.openapi:apikey-service:0.5.0-SNAPSHOT'
+  javaClient 'io.service84.openapi:permission-service:0.5.0-SNAPSHOT'
+  javaClient 'io.service84.openapi:impersonation-service:0.5.0-SNAPSHOT'
   
   implementation 'io.service84.library:exceptionalresult:1.3.50-SNAPSHOT'
   implementation 'io.service84.library:authutils:1.3.50-SNAPSHOT'
@@ -271,7 +272,7 @@ eclipse {
 //Process Service Dependencies//
 ////////////////////////////////
 task processService {
-  configurations.service.each {
+  configurations.javaClient.each {
     def serviceJAR = "${it}"
     def serviceName = org.apache.commons.io.FilenameUtils.getBaseName(serviceJAR).split('-')[0]
 
