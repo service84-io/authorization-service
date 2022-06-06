@@ -38,8 +38,8 @@ public class ServiceBootstrapAuthentication {
   private static final Logger logger =
       LoggerFactory.getLogger(ServiceBootstrapAuthentication.class);
 
-  private static String AuthenticateAnyAPIKey = "authentication:authenticate_any_api_key";
-  private static String RetrieveAnyAPIKey = "authentication:retrieve_any_api_key";
+  private static String AuthenticateAnyAPIKey = "apikey:authenticate_any_api_key";
+  private static String RetrieveAnyAPIKey = "apikey:retrieve_any_api_key";
   private static String GetAnyScope = "permission:get_any_scope";
   private static String GetAnySubjectScopes = "permission:get_any_subject_scopes";
 
